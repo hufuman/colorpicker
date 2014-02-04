@@ -124,7 +124,7 @@ CAPTION "About ColorPicker"
 FONT 8, "MS Shell Dlg", 0, 0, 0x1
 BEGIN
     ICON            IDR_MAINFRAME,IDC_STATIC,7,7,21,20
-    LTEXT           "ColorPicker, Version 1.0\r\n\r\nCtrl+1:Toggle Picking\r\nClick Color:Toggle Mannifier",IDC_STATIC,34,7,97,32,SS_NOPREFIX
+    LTEXT           "ColorPicker, Version 1.0\r\n\r\nCtrl+1:Toggle Picking\r\nClick Color:Toggle Magnifier",IDC_STATIC,34,7,97,32,SS_NOPREFIX
     DEFPUSHBUTTON   "OK",IDOK,102,56,50,14,WS_GROUP
     LTEXT           "Author: hufuman@github",IDC_LINK_AUTHOR,34,44,97,8
 END
