@@ -23,4 +23,8 @@ public:
     virtual BOOL OnInitDialog();
     afx_msg void OnPaint();
     afx_msg BOOL OnEraseBkgnd(CDC* pDC);
+    afx_msg void OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags);
+
+private:
+    int m_nRatio;
 };

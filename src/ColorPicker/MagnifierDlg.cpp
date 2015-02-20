@@ -8,14 +8,12 @@
 
 // CMagnifierDlg dialog
 
-static const int g_Ratio = 2;
-
 IMPLEMENT_DYNAMIC(CMagnifierDlg, CDialog)
 
 CMagnifierDlg::CMagnifierDlg(CWnd* pParent /*=NULL*/)
 	: CDialog(CMagnifierDlg::IDD, pParent)
 {
-
+    m_nRatio = 2;
 }
 
 CMagnifierDlg::~CMagnifierDlg()
@@ -32,6 +30,7 @@ BEGIN_MESSAGE_MAP(CMagnifierDlg, CDialog)
     ON_WM_TIMER()
     ON_WM_PAINT()
     ON_WM_ERASEBKGND()
+    ON_WM_KEYUP()
 END_MESSAGE_MAP()
 
 
@@ -40,18 +39,6 @@ END_MESSAGE_MAP()
 void CMagnifierDlg::OnTimer(UINT_PTR nIDEvent)
 {
     // TODO: Add your message handler code here and/or call default
-
-    RECT rcClient;
-    GetClientRect(&rcClient);
-
-    RECT rcSrc = rcClient;
-    rcSrc.right /= g_Ratio;
-    rcSrc.bottom /= g_Ratio;
-
-    POINT Pt;
-    ::GetCursorPos(&Pt);
-    ::OffsetRect(&rcSrc, Pt.x - rcSrc.right / 2, Pt.y - rcSrc.bottom / 2);
-
     Invalidate();
 
     CDialog::OnTimer(nIDEvent);
@@ -80,13 +67,28 @@ void CMagnifierDlg::OnPaint()
 
     HDC hScreenDC = ::GetDC(NULL);
 
-    ::StretchBlt(dc,
-        0, 0,
-        rcClient.right, rcClient.bottom,
-        hScreenDC,
-        Pt.x - rcClient.right / 4, Pt.y - rcClient.bottom / 4,
-        rcClient.right / 2, rcClient.bottom / 2,
-        SRCCOPY);
+    if(m_nRatio >= 0)
+    {
+        int ratio = m_nRatio == 0 ? 1 : m_nRatio;
+        ::StretchBlt(dc,
+            0, 0,
+            rcClient.right, rcClient.bottom,
+            hScreenDC,
+            Pt.x - rcClient.right / ratio / 2, Pt.y - rcClient.bottom / ratio / 2,
+            rcClient.right / ratio, rcClient.bottom / ratio,
+            SRCCOPY);
+    }
+    else
+    {
+        int ratio = m_nRatio == 0 ? 1 : - m_nRatio;
+        ::StretchBlt(dc,
+            0, 0,
+            rcClient.right, rcClient.bottom,
+            hScreenDC,
+            Pt.x - rcClient.right / ratio / 2, Pt.y - rcClient.bottom / ratio / 2,
+            rcClient.right * ratio, rcClient.bottom * ratio,
+            SRCCOPY);
+    }
 
     CURSORINFO Cursorinfo = {sizeof(Cursorinfo)};
     if(::GetCursorInfo(&Cursorinfo) && Cursorinfo.flags == CURSOR_SHOWING && Cursorinfo.hCursor != NULL)
@@ -104,4 +106,21 @@ void CMagnifierDlg::OnPaint()
 BOOL CMagnifierDlg::OnEraseBkgnd(CDC* pDC)
 {
     return NULL;
+}
+
+void CMagnifierDlg::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
+{
+    if(nChar == VK_OEM_PLUS || nChar == VK_ADD)
+    {
+        ++ m_nRatio;
+        if(m_nRatio == 0)
+            m_nRatio = 2;
+    }
+    else if(nChar == VK_OEM_MINUS || nChar == VK_SUBTRACT)
+    {
+        -- m_nRatio;
+        if(m_nRatio == 0)
+            m_nRatio = -2;
+    }
+    CDialog::OnKeyUp(nChar, nRepCnt, nFlags);
 }
