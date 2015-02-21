@@ -85,7 +85,7 @@ void CMagnifierDlg::OnPaint()
             0, 0,
             rcClient.right, rcClient.bottom,
             hScreenDC,
-            Pt.x - rcClient.right / ratio / 2, Pt.y - rcClient.bottom / ratio / 2,
+            Pt.x - rcClient.right * ratio / 2, Pt.y - rcClient.bottom * ratio / 2,
             rcClient.right * ratio, rcClient.bottom * ratio,
             SRCCOPY);
     }
